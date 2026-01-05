@@ -1,0 +1,174 @@
+{
+  "name": "Wikipedia - agente",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -176,
+        -96
+      ],
+      "id": "6d0dcdc0-834f-4f97-be6e-29397d744235",
+      "name": "When chat message received",
+      "webhookId": "64b81448-5a35-4f95-b950-207085f7e849"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=## Objetivo\n\nEres un asistente amable, tu nombre es Amy, ayudas a buscar información en Wikipedia\n\n\n\n## Reglas\n\n- Regresa siempre respuestas de dos párrafos o menos.\n\n- Siempre pon las referencias de los artículos que consultas de Wikipedia.\n\n\n\n## Tools\n\n- Tienes una \"tool\" para conectarte a Wikipedia y traer información, puedes usarla para confirmar información"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        64,
+        -48
+      ],
+      "id": "d2a154c4-dc3f-4d68-872b-7fe4e327ab72",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        144
+      ],
+      "id": "d8d44149-6aae-4769-9ce7-9276ad054b71",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "2xddNWnrn4cGbZdJ",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        160
+      ],
+      "id": "9542132b-6a8d-47ff-8de1-7efa89832f79",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        352,
+        160
+      ],
+      "id": "b4366312-769a-464f-8073-004b5b0291ae",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        160
+      ],
+      "id": "ed03d806-b4c7-4b2c-a7ff-2dc6199a62b4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hpA9palxUl1NaggA",
+          "name": "Google Gemini javiko key"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "37a38662-69ee-47df-ad53-e3e87272b1dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "48fc7ad25e5a5f2af4a7146245b96cc79708fafa3bf85f16810ea7784b0ccd27"
+  },
+  "id": "dlzLB4ZQS4QtHCHE",
+  "tags": [
+    {
+      "updatedAt": "2026-01-04T16:47:56.062Z",
+      "createdAt": "2026-01-04T16:47:56.062Z",
+      "id": "Q00DpTt6cOpFDK4g",
+      "name": "agentes"
+    }
+  ]
+}
