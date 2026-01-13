@@ -1,0 +1,426 @@
+{
+  "name": "Asistente personal",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "1093cce0-5df2-4dac-a679-f63d6c8f39f2",
+      "name": "When chat message received",
+      "webhookId": "2dd1a9bc-1dfb-4ad9-a4a6-69ec7176a6bd"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Descripción\n- Eres un asistente de AI que administra correos electrónicos y calendario de forma eficiente.\n- Tus respuestas deben ser cortas, claras y directas.\n- Prioriza siempre la organización y productividad.\n\n# Reglas de calendario\n- Horario laboral: 8am a 4pm (Lunes a Viernes).\n- No agendar fuera del horario laboral ni en fines de semana.\n- No permitir traslapes: verificar disponibilidad antes de agendar.\n- Confirmar siempre antes de crear, modificar o cancelar eventos.\n- Enviar recordatorios 15 minutos antes de cada evento.\n- Resumir eventos diarios al inicio del día y semanales los lunes a primera hora.\n\n# Reglas de correo electrónico\n- Lectura: siempre en texto plano, sin HTML.\n- Antes de enviar un correo, siempre crear un borrador (en formato HTML) y regresalo para confirmar antes de enviarlo pero al enviar mandalo en formato html para que se vea bien al receptor .\n- A la hora de enviar el correo, crea su estructura con formato html con negrita y títulos apropiados.\n- Clasificación: agrupar por prioridad (Alta > Media > Baja).\n- Ignorar: correos promocionales, spam y notificaciones irrelevantes.\n- Resumir correos importantes al inicio del día.\n- Confirmar siempre antes de eliminar o archivar correos.\n- Proponer respuestas rápidas para correos de alta prioridad.\n- No coloques \"[Tu Nombre]\", siempre pon \"Javiko500\" en su lugar.\n\n# Herramientas - Tools\n- Acceso al calendario: crear, modificar, cancelar eventos, obtener eventos.\n- Acceso al correo: leer, redactar, clasificar y enviar correos.\n- Puede integrarse con listas de tareas y recordatorios para mejorar la productividad.\n\n# La fecha actual es:\n{{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        -32
+      ],
+      "id": "5c75dc20-0091-4ccd-a328-9531ab4ab615",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-pro-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        160
+      ],
+      "id": "2ec95c41-3bb0-43a0-9757-75549911a060",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dNPGvbnzVm5XUDpe",
+          "name": "Google Gemini Javiko n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        192
+      ],
+      "id": "0c1df236-66c0-4d53-8891-61257bef3846",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "=llama3.2:3b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        192
+      ],
+      "id": "f1e7acd4-dec9-47b1-9c7a-d9cca81b31dc",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "ulasTG7H3T75Dd3n",
+          "name": "Ollama - localhost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "59e2fa74818cae36ba1ec7045d1aa865202c580af542098164b0cca2bbae2d6f@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "N8n test"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        848,
+        160
+      ],
+      "id": "7f3afacc-6c1c-4122-9009-79846110ab38",
+      "name": "crear en evento de calendario",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Cjf3J0bVqmxYjmxU",
+          "name": "Google Calendar - jk n8n"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "59e2fa74818cae36ba1ec7045d1aa865202c580af542098164b0cca2bbae2d6f@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "N8n test"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        160
+      ],
+      "id": "ae57f699-fa70-4ec4-bb4c-55abd832ef99",
+      "name": "Obtener eventos",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Cjf3J0bVqmxYjmxU",
+          "name": "Google Calendar - jk n8n"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "description": "Esta herramienta ofrece sobre pokemons",
+        "workflowId": {
+          "__rl": true,
+          "value": "WNUmOvZqDCj1chajjw-rQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/WNUmOvZqDCj1chajjw-rQ",
+          "cachedResultName": "Pokemon finder Tool"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "name"
+          ],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        192
+      ],
+      "id": "ced4d678-0efd-4103-a2ed-7717e9fc735e",
+      "name": "obtener_informacion_pockemos"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        -80
+      ],
+      "id": "7118bfd0-fbba-4bc3-85b4-fb120b2d9133",
+      "name": "Crear borrador",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "jjavikog@gmail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        -80
+      ],
+      "id": "d53988ac-25dc-485a-9bd9-689ae2d0fb89",
+      "name": "Enviar email",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -80
+      ],
+      "id": "6810f01d-e7db-49ce-a801-b2b57c9ef0ba",
+      "name": "Obtener los ultmimos emails",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/987620cb-6170-4be7-9f11-f784c644992d",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        192
+      ],
+      "id": "c146c731-083f-47f1-ad88-485aeb5290d5",
+      "name": "MCP Gmail Client"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/jk/google/calendar",
+        "authentication": "headerAuth",
+        "include": "selected",
+        "includeTools": [
+          "Obtener_eventos",
+          "crear_en_evento_de_calendario"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        192
+      ],
+      "id": "290dc2e4-d34f-4d84-9e3e-1d990d1e4cc3",
+      "name": "MCP google calendar",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "thiQdM8LKuv5s7WM",
+          "name": "mcp-key-google-calendar"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear en evento de calendario": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Obtener eventos": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "obtener_informacion_pockemos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear borrador": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Enviar email": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Obtener los ultmimos emails": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "MCP Gmail Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP google calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "87942bbf-28b1-41af-9007-5d1ef5dc80b3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "ax7HrrZFM6PQCv8b",
+  "tags": [
+    {
+      "updatedAt": "2026-01-04T16:55:31.453Z",
+      "createdAt": "2026-01-04T16:55:31.453Z",
+      "id": "WUn7qjX5j1edOpVR",
+      "name": "agentes"
+    }
+  ]
+}
