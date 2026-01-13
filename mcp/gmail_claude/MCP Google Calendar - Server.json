@@ -1,0 +1,169 @@
+{
+  "name": "MCP Google Calendar - Server",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "path": "jk/google/calendar"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f9f89d2b-b280-43bb-932f-585e37f0a8da",
+      "name": "MCP Server Trigger",
+      "webhookId": "b818ac29-c745-4cb7-b9e0-2868dd624326",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZfkHbLYQhs69rrSg",
+          "name": "Header Auth account Secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "59e2fa74818cae36ba1ec7045d1aa865202c580af542098164b0cca2bbae2d6f@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "N8n test"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        256
+      ],
+      "id": "130fa417-f696-47d1-9f97-d9d753b73bf7",
+      "name": "crear_evento_calendario",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Cjf3J0bVqmxYjmxU",
+          "name": "Google Calendar - jk n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "59e2fa74818cae36ba1ec7045d1aa865202c580af542098164b0cca2bbae2d6f@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "N8n test"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        256
+      ],
+      "id": "4284d798-f718-40d0-a5bc-167c609a6abc",
+      "name": "obtener_eventos",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Cjf3J0bVqmxYjmxU",
+          "name": "Google Calendar - jk n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "59e2fa74818cae36ba1ec7045d1aa865202c580af542098164b0cca2bbae2d6f@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "N8n test"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        256
+      ],
+      "id": "87dcd13a-740e-440c-8bc7-6c0fe35997db",
+      "name": "obtener_por_id",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "Cjf3J0bVqmxYjmxU",
+          "name": "Google Calendar - jk n8n"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "crear_evento_calendario": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener_eventos": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener_por_id": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "3ac6c2fc-0ad9-4190-92d7-d31df370b491",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "sb-35gMLu4ugwJjSfEAoF",
+  "tags": [
+    {
+      "name": "MCP",
+      "id": "rnNu0RZNvfpalgnn",
+      "updatedAt": "2026-01-13T04:31:28.488Z",
+      "createdAt": "2026-01-13T04:31:28.488Z"
+    }
+  ]
+}

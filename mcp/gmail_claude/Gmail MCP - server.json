@@ -1,0 +1,177 @@
+{
+  "name": "Gmail MCP - server",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "987620cb-6170-4be7-9f11-f784c644992d"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        128,
+        0
+      ],
+      "id": "4d542425-5aab-4f83-9f71-9deb0a10af93",
+      "name": "MCP Server Trigger",
+      "webhookId": "987620cb-6170-4be7-9f11-f784c644992d"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "jjavikog@gmail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        224
+      ],
+      "id": "169e18eb-e9b4-4834-9e44-f28487a4975d",
+      "name": "Enviar email",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        224
+      ],
+      "id": "94bcbca7-240b-4046-b1ae-a5ca9d768c2f",
+      "name": "Crear borrador",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        224
+      ],
+      "id": "eab5794e-bca3-41ff-89f8-914513ded6de",
+      "name": "Obtener los ultmimos emails",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        224
+      ],
+      "id": "c2124ba6-a029-40e4-8c4c-8055d2c3d3d8",
+      "name": "Enviar email1",
+      "webhookId": "3362cace-202a-4bcf-b49f-8016ad0ded34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJlLcajApGapqMQI",
+          "name": "Gmail account-devjk"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Obtener los ultmimos emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear borrador": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar email1": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "f4a56050-9eb5-49ec-9ac1-eb6d85597954",
+  "meta": {
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "bUg2EV-yWKHrasZTaziJT",
+  "tags": [
+    {
+      "name": "MCP",
+      "id": "rnNu0RZNvfpalgnn",
+      "updatedAt": "2026-01-13T04:31:28.488Z",
+      "createdAt": "2026-01-13T04:31:28.488Z"
+    }
+  ]
+}
