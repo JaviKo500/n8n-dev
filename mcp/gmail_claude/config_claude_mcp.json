@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "n8n-google-calendar": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://localhost:5678/mcp/jk/google/calendar",
+        "--header",
+        "x-token-jk: 11d2f082af08722471d36b443c3621cd"
+      ],
+      "env": {
+        "AUTH_TOKEN": "<MCP_BEARER_TOKEN>"
+      }
+    },
+    "n8n-google-gmail": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://localhost:5678/mcp/987620cb-6170-4be7-9f11-f784c644992d",
+        "--header",
+        "Authorization: Bearer ${AUTH_TOKEN}"
+      ],
+      "env": {
+        "AUTH_TOKEN": "<MCP_BEARER_TOKEN>"
+      }
+    }
+  }
+}
