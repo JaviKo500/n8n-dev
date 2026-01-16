@@ -1,0 +1,118 @@
+{
+  "name": "auth_flow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "company/metrics/:company-id",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1104,
+        320
+      ],
+      "id": "bc1a366d-43cd-4345-81d8-72889a3fc92a",
+      "name": "Webhook",
+      "webhookId": "afc8b025-1e6a-4878-801b-ca6a75610233",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "mvSVextXUAhF7gZ0",
+          "name": "basic_auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"comapyId\":\"{{ $json.params['company-id'] }}\",\n  \"sales\": 3452231,\n  \"items\": 332125,\n  \"users\": 2332,\n  \"clients\": 3345,\n  \"conversionRate\": 4.7,\n  \"revenue\": 982345.55,\n  \"activeSessions\": 189,\n  \"newUsersToday\": 42,\n  \"topProduct\": {\n    \"id\": \"PRD-9845\",\n    \"name\": \"Wireless Noise-Cancelling Headphones\",\n    \"unitsSold\": 14231,\n    \"revenue\": 213456.78\n  },\n  \"traffic\": {\n    \"today\": 5432,\n    \"thisWeek\": 38765,\n    \"thisMonth\": 152347\n  },\n  \"lastUpdated\": \"2025-08-27T12:45:00Z\"\n}\n ",
+        "includeOtherFields": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        320
+      ],
+      "id": "9d8c52e1-04a1-45e3-9cd2-4bef09bcad15",
+      "name": "Retornar información"
+    },
+    {
+      "parameters": {
+        "content": "# ¿Qué tipo de autenticación debo usar?\n\n### ¿El servicio externo ya soporta un método de autenticación específico?\n- **Sí** → Usa el que soporten.\n- **No** → Sigue leyendo.\n\n### ¿Necesitas acceso con tiempo limitado o metadatos del usuario?\n- **Sí** → Usa **JWT**.\n- **No** → Sigue leyendo.\n\n### ¿Estás usando una API key o token simple?\n- **Sí** → Usa **Header Auth**.\n- **No** → Sigue leyendo.\n\n### ¿El servicio soporta HTTP Basic Auth estándar?\n- **Sí** → Usa **Basic Auth**.\n- **No** → Usa **Header Auth** (más flexible).\n\n---\n\n## Ejemplos del mundo real:\n\n- **Basic Auth:**  \n  Conexión a sistemas empresariales como **Jira**, **Jenkins**, o sistemas **CRM** antiguos.\n\n- **Header Auth:**  \n  Integración con APIs modernas como **Slack**, **Discord**, o aplicaciones personalizadas que usan API keys.\n\n- **JWT:**  \n  Creación de **microservicios**, **backends de apps móviles**, o sistemas que requieren **permisos específicos por usuario**.\n\n\n\n\nEsta lista de puntos fue idea de: [Nate Herk | AI Automation](https://www.youtube.com/watch?v=3FfCRbq3XMs)\n",
+        "height": 880,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        16
+      ],
+      "id": "f99df28a-913e-47e0-998c-8befd687a9a8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1600,
+        320
+      ],
+      "id": "38a7abb1-2b77-4115-9260-658f010276d7",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Retornar información",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retornar información": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "55f66b07-5b18-4cb9-8dfe-f919c926134c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "QLkpNmDEeORFb2RRpC338",
+  "tags": [
+    {
+      "updatedAt": "2026-01-16T16:30:23.990Z",
+      "createdAt": "2026-01-16T16:30:23.990Z",
+      "id": "ziFPiWY7OfEBrV6s",
+      "name": "security"
+    }
+  ]
+}
