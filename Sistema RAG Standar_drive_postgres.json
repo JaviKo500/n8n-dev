@@ -1,0 +1,1047 @@
+{
+  "name": "Sistema RAG Standar",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Alimentar la Base de datos",
+        "height": 688,
+        "width": 1216,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1104,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "ee7876e7-de36-4ba9-b8fe-ca76011109d2",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Consumo de esa Base de datos",
+        "height": 688,
+        "width": 1472,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "4e8649a6-164e-4c2f-bf2d-9b5ade6dc5d4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Documentos",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Archivos",
+              "fieldType": "file",
+              "fieldName": "Archivos",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -3312,
+        112
+      ],
+      "id": "9bfeecae-141c-4460-a9c8-394e65259d3a",
+      "name": "a",
+      "webhookId": "aad9f899-b258-4b00-baba-565b15a31d80",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        },
+        "embeddingBatchSize": 250
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        144
+      ],
+      "id": "2ce6694c-e620-4bb3-ace7-ec95ceda6c14",
+      "name": "Simple Vector Store",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        128,
+        848
+      ],
+      "id": "bf3bb845-91c6-4c21-81ba-eafaf4e1a1cb",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dNPGvbnzVm5XUDpe",
+          "name": "Google Gemini Javiko n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        448
+      ],
+      "id": "fcf1357d-5887-4b13-ab3b-9242c1669d80",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 250,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        528
+      ],
+      "id": "1f10e0c3-b1b6-4feb-9418-a6e1f8d69f69",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        256
+      ],
+      "id": "c3dfe72f-b471-4b37-9af5-f1a8152004e6",
+      "name": "When chat message received",
+      "webhookId": "f6dffe89-c9db-4828-8f7b-fb83ff9bc7e1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Rol: Asistente Legal\n\n## Descripción\nEres un asistente legal diseñado para ayudar a un abogado a consultar información contenida en documentos legales internos.  \nDebes recuperar, analizar y entregar respuestas precisas, claras y fundamentadas basadas únicamente en los documentos disponibles.  \nMantén siempre un tono profesional y formal, y prioriza la exactitud legal en todas tus respuestas.  \n\nTus respuestas deben de ser cortas y puntuales.\n\nSi no conoces la respuesta, responde que no dispones de la información.\n\n\n\n## Capacidades\n- Búsqueda y recuperación de información legal relevante.  \n- Respuestas concisas y con fundamento en los documentos disponibles.  \n- Inclusión de referencia del documento utilizado para responder.  \n- Identificación de ausencia de información en los documentos.  \n- Mantener confidencialidad y precisión en todas las respuestas.  \n\n\n## Comportamiento\n1. Recepción de la consulta: Recibe la pregunta o solicitud del abogado.  \n2. Búsqueda de información en la base de conocimiento para encontrar información relevante en los documentos.  \n3. Generación de la respuesta:  \n   - Si encuentras la información:  \n     - Proporciona un resumen conciso, claro y preciso.  \n     - Incluye la referencia del documento donde encontraste la información (nombre o identificación del documento y sección/cláusula si aplica).  \n   - Si no encuentras la información:  \n     - Responde únicamente con:  \n       ```\n       No puedo encontrar la respuesta en los recursos disponibles.\n       ```\n4. Confidencialidad: No reveles información fuera de lo que esté contenido en los documentos.  \n5. Tono: Profesional, formal, claro y directo.  \n\n## Ejemplo\nPregunta del abogado:  \n> ¿Cuál es el procedimiento de terminación anticipada del contrato de arrendamiento?\n\nRespuesta del asistente (ejemplo):  \n> Según el Contrato de Arrendamiento - Cláusula 12, el contrato puede ser terminado anticipadamente por cualquiera de las partes notificando con al menos 30 días de antelación y cumpliendo con el pago proporcional de las obligaciones pendientes.  \n> Referencia: Contrato_Arrendamiento_2025.pdf, Cláusula 12.  "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        256
+      ],
+      "id": "cd3a6328-f5ce-450d-85ca-749f54827bf1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        336,
+        464
+      ],
+      "id": "937f783b-f314-4bd0-a5bc-803d3aaecb5b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dNPGvbnzVm5XUDpe",
+          "name": "Google Gemini Javiko n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        464
+      ],
+      "id": "8abc6e43-8b74-4bfd-8bff-e6915550168e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Aqui puedes tomar los documentos cargados como base de informacion",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        368
+      ],
+      "id": "213a2dd0-0a2c-4bbe-96b6-853ff2ca33e9",
+      "name": "Simple Vector Store1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Seleccion de documentos",
+        "height": 688,
+        "width": 2496,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3632,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "fe484155-2071-4100-ac9d-d3c93a43b88a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        -1040,
+        304
+      ],
+      "id": "a63cfa05-e133-42e4-86af-390dc6ba2261",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Aqui puedes tomar los documentos cargados como base de informacion. Para responder preguntas relacionadas"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        384
+      ],
+      "id": "d8a78886-201b-4c95-990b-1304248e33f8",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        528
+      ],
+      "id": "1be6fb8a-4b0b-4e1a-90df-384ab7876fc1",
+      "name": "Postgres PGVector Store1",
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        560
+      ],
+      "id": "e58b3bf6-5bcc-48ed-a077-e3e54b589316",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dNPGvbnzVm5XUDpe",
+          "name": "Google Gemini Javiko n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1296,
+        304
+      ],
+      "id": "4b609d75-9190-464a-b08f-aaafe78d3b7e",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XcSpUdZrURuQ7mTj",
+          "name": "google_drive_keys"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3520,
+        224
+      ],
+      "id": "35f34937-4962-4cf0-b61b-b0aa6065fdf8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -3520,
+        448
+      ],
+      "id": "56f5b1af-5514-495b-ad11-e2e27263cb6f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "166pQM8gUNkwTSC3xjBD0WESVaScmkbHp",
+            "mode": "list",
+            "cachedResultName": "documentos_rag",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/166pQM8gUNkwTSC3xjBD0WESVaScmkbHp"
+          },
+          "includeTrashed": false
+        },
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3232,
+        320
+      ],
+      "id": "80bf9959-d834-4a60-a3c2-3d9340ecfa15",
+      "name": "buscar_archivos_directorios",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XcSpUdZrURuQ7mTj",
+          "name": "google_drive_keys"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "86c13f13-b14b-4ec5-b380-0a1e1bd4653f",
+              "leftValue": "={{ $json.mimeType }}",
+              "rightValue": "application/vnd.google-apps.folder",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2976,
+        320
+      ],
+      "id": "0ade1036-0f46-48a7-baec-5c7278b7ab1c",
+      "name": "es un archivo?"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {
+          "fields": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2928,
+        544
+      ],
+      "id": "9b19874d-f87a-4190-8169-1188741b56af",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XcSpUdZrURuQ7mTj",
+          "name": "google_drive_keys"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select count(*) as ingested from public.ingested_files\nwhere file_id = '{{ $json.id }}' and md5_checksum ='{{ $json.md5Checksum }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2768,
+        224
+      ],
+      "id": "e2b7f4fb-5d1b-432e-b888-60112f6ce6f9",
+      "name": "obtener carga previa",
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "74d77895-b117-4040-8fad-ad9e0e5f17b3",
+              "leftValue": "={{ $json.ingested }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2560,
+        224
+      ],
+      "id": "09aea696-0add-4bd1-a96c-c0b536b28db3",
+      "name": "fue previamente cargado"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        96
+      ],
+      "id": "7910835d-2e0d-43f2-b87a-e0bfb2ab1562",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6eb01525-96ee-45c8-b62c-103a70e87fd2",
+              "name": "id",
+              "value": "={{ $('es un archivo?').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5ebbc699-d409-4b93-ab90-e8e0d4ba3ec8",
+              "name": "md5Checksum",
+              "value": "={{ $('es un archivo?').item.json.md5Checksum }}",
+              "type": "string"
+            },
+            {
+              "id": "9047fc2c-66bf-4470-a04e-4894430c7066",
+              "name": "mimeType",
+              "value": "={{ $('es un archivo?').item.json.mimeType }}",
+              "type": "string"
+            },
+            {
+              "id": "91510e9d-977c-4ad2-a678-2202ad083303",
+              "name": "modifiedTime",
+              "value": "={{ $('es un archivo?').item.json.modifiedTime }}",
+              "type": "string"
+            },
+            {
+              "id": "4318e5dc-bf07-4ea1-ab32-9461c3e1c96d",
+              "name": "name",
+              "value": "={{ $('es un archivo?').item.json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2304,
+        240
+      ],
+      "id": "4cb90635-0746-46a4-b228-6d93ec9b736d",
+      "name": "Extraer variables"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "delete from n8n_vectors where file_id= '{{ $json.id }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2064,
+        448
+      ],
+      "id": "f8c5b5cf-c0aa-4bfd-86e5-b4f26de79775",
+      "name": "borrar referencias",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        304
+      ],
+      "id": "1d85a5a0-8809-40e9-9c15-17b1e9b863b2",
+      "name": "esperar eliminacion"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "ingested_files",
+          "mode": "list",
+          "cachedResultName": "ingested_files"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_id": "={{ $json.id }}",
+            "md5_checksum": "={{ $json.md5Checksum }}",
+            "mime_type": "={{ $json.mimeType }}",
+            "name": "={{ $json.name }}",
+            "modified_time": "={{ $json.modifiedTime }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mime_type",
+              "displayName": "mime_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "md5_checksum",
+              "displayName": "md5_checksum",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modified_time",
+              "displayName": "modified_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_ingested",
+              "displayName": "last_ingested",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1584,
+        304
+      ],
+      "id": "e2cf4062-37ef-432d-b8dd-d2f37e3e8fa0",
+      "name": "ingestar documento",
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE n8n_vectors\nSET file_id = '{{ $('Extraer variables').item.json.id }}'\nWHERE metadata->'loc'->'lines' = '{{ $json.metadata.loc.lines.toJsonString() }}' and file_id is null",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1296,
+        560
+      ],
+      "id": "2658ab39-ed6c-44dc-b33b-c862283e249d",
+      "name": "actualizar file_id  en vectores",
+      "credentials": {
+        "postgres": {
+          "id": "9uDpYwHrbUK4EO1W",
+          "name": "Postgres - neon- n8n"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        560
+      ],
+      "id": "831fffba-643b-4a29-aa1f-15cf31ef8d7c",
+      "name": "termina proceso"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "a": {
+      "main": [
+        []
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store1": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "buscar_archivos_directorios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "buscar_archivos_directorios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_archivos_directorios": {
+      "main": [
+        [
+          {
+            "node": "es un archivo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "es un archivo?": {
+      "main": [
+        [
+          {
+            "node": "obtener carga previa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "es un archivo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener carga previa": {
+      "main": [
+        [
+          {
+            "node": "fue previamente cargado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fue previamente cargado": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer variables": {
+      "main": [
+        [
+          {
+            "node": "borrar referencias",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "esperar eliminacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "borrar referencias": {
+      "main": [
+        [
+          {
+            "node": "esperar eliminacion",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "esperar eliminacion": {
+      "main": [
+        [
+          {
+            "node": "ingestar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ingestar documento": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store": {
+      "main": [
+        [
+          {
+            "node": "actualizar file_id  en vectores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar file_id  en vectores": {
+      "main": [
+        [
+          {
+            "node": "termina proceso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "47d4522f-df67-4d22-a45e-29295f7f246c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "27P68AKhxRAuG8Ec1mamx",
+  "tags": [
+    {
+      "updatedAt": "2026-01-17T13:46:49.964Z",
+      "createdAt": "2026-01-17T13:46:49.964Z",
+      "id": "QXQ9td7BUNgayvMg",
+      "name": "RAG"
+    }
+  ]
+}
