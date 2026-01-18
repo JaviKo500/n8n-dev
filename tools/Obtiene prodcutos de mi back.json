@@ -1,0 +1,337 @@
+{
+  "name": "Obtiene prodcutos de mi back",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://localhost:3000/products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ef737791-5e48-4578-9420-634849d21d9c",
+      "name": "obtener productos"
+    },
+    {
+      "parameters": {
+        "path": "my-store/products",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "8d72db26-8cee-435f-9892-e53b05497e2c",
+      "name": "Webhook - 0btener productos",
+      "webhookId": "e59b2d6a-00d2-4eed-8997-8353769830df",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nCDCpHYxBzxO5PhW",
+          "name": "api-auth-tool"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "dccc2f15-dd6d-46e4-9baa-d4301d9149b8",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## get_products\nObtiene productos desde mi backend",
+        "height": 288,
+        "width": 736
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "fc79acbe-00d5-4103-a53d-4267f4f4cb58",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-store/orders",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        432
+      ],
+      "id": "163cdf49-7355-435c-ac2f-0649f91b77cb",
+      "name": "Webhook - 0btener orden por id",
+      "webhookId": "e59b2d6a-00d2-4eed-8997-8353769830df",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nCDCpHYxBzxO5PhW",
+          "name": "api-auth-tool"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        304
+      ],
+      "id": "ceae222f-a266-437e-bcaa-5529d3c3eae1",
+      "name": "responder con la orden"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3850995c-027e-41c4-9805-940f57202417",
+              "leftValue": "={{ $json.body.orderId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        432
+      ],
+      "id": "dda4176f-48a9-4cbd-9706-aa1bc9776565",
+      "name": "existe order id en el body"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"ok\": false,\n  \"message\": \"Orden id es requerida\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        368,
+        496
+      ],
+      "id": "11c6da88-61fd-4f4a-9b07-eb790e34fa72",
+      "name": "Error no hay id en body"
+    },
+    {
+      "parameters": {
+        "url": "=http://localhost:3000/orders/{{ $json.body.orderId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        368,
+        368
+      ],
+      "id": "1189b3f0-896c-49fe-8f6d-a92167e3c740",
+      "name": "obtener orden por id",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d815db7-8dcf-4243-afc2-f99d31a900b2",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        368
+      ],
+      "id": "e91c7a7d-e2e2-4cf0-adf8-6f4fba8db415",
+      "name": "la orden fue encontrada"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"ok\": false,\n  \"message\": \"La orden no fue encontrada\"\n}",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        432
+      ],
+      "id": "ae050075-4d96-4689-bcbd-4b2fa2f31a9a",
+      "name": "Error no hay id en body1"
+    },
+    {
+      "parameters": {
+        "content": "## get_order_id\nobtiene la orden por el id",
+        "height": 448,
+        "width": 1216,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "8444ec06-291a-4b24-8ca8-677ed5e6a6f2",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - 0btener productos": {
+      "main": [
+        [
+          {
+            "node": "obtener productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener productos": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - 0btener orden por id": {
+      "main": [
+        [
+          {
+            "node": "existe order id en el body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "existe order id en el body": {
+      "main": [
+        [
+          {
+            "node": "obtener orden por id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error no hay id en body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener orden por id": {
+      "main": [
+        [
+          {
+            "node": "la orden fue encontrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "la orden fue encontrada": {
+      "main": [
+        [
+          {
+            "node": "responder con la orden",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error no hay id en body1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a35dcc49-aab6-4fb0-a600-ed708be0e614",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a47f4c671d2d2e30274a1c416bcf208f06e54b60d53e089e8d0d2cb0e39f96a"
+  },
+  "id": "qsBv1IKxNx-PIxHjdCab2",
+  "tags": []
+}
