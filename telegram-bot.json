@@ -1,0 +1,504 @@
+{
+  "name": "telegram-bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        -16
+      ],
+      "id": "ac8f02ab-bce0-435c-b379-71f83fc6ee85",
+      "name": "Telegram Trigger",
+      "webhookId": "14c18b35-095a-4045-8fdf-adc780d99f61",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## /Start\nUsuario se conecta al bot",
+        "height": 272,
+        "width": 848,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -352
+      ],
+      "typeVersion": 1,
+      "id": "d1c759cd-ef08-4ffc-8a51-ded4dba0713e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "sendSticker",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -256
+      ],
+      "id": "6df42a7d-09b1-4c15-b70a-2b4a15d2fc95",
+      "name": "Enviar sticker",
+      "webhookId": "18851c7e-3ddc-4753-b7a3-ed93161e7254",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Bienvenido",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        -256
+      ],
+      "id": "3fbcd468-4ba6-447d-8377-50708a10e66c",
+      "name": "enviar mensaje",
+      "webhookId": "18851c7e-3ddc-4753-b7a3-ed93161e7254",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.giphy.com/v1/stickers/random?api_key=npW12Ydjk2Are4MZ2q2IlIwz3XGskG5f&tag=hola&rating=g",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        -256
+      ],
+      "id": "f7dc80e5-606c-43c3-8b13-fd8cbc85b049",
+      "name": "obtener el sticker"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.images.original.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        -256
+      ],
+      "id": "7d4be7db-dd52-4dda-9319-4abd16526af3",
+      "name": "descargar sticker"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "403af532-8e4e-447a-9aaa-167af5bf7cc8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "73e4c867-9623-488e-95f5-f661ee816046",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "message_text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -224,
+        -16
+      ],
+      "id": "40e0e928-4e9e-4513-a3f7-d7754020902f",
+      "name": "Que tipo de mensaje es?"
+    },
+    {
+      "parameters": {
+        "content": "## Text message\n",
+        "height": 304,
+        "width": 848,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "ccbca617-8714-46ab-89a2-7be96b83e6ef",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        16
+      ],
+      "id": "f8f3cbac-6fd1-42f4-baf8-38485ef6126a",
+      "name": "Escribiendo",
+      "webhookId": "9f03508c-4fe6-44d4-badc-988ba78c431e",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"text\": \"{{ $('Telegram Trigger').item.json.message.text }}\",\n  \"type\": \"message\",\n\"ai\": \"\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        16
+      ],
+      "id": "10706900-738e-40c2-86f2-7f6c5b4e493b",
+      "name": "datos del mensaje"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=## Descripción\n- Eres un asistente que ayuda a las personas con problemas de cultura general\n- Tus respuestas deben de ser muy cortas, 1 o 2 lineas máximo \n\n- A veces recibirás textos de imágenes previamente analizadas por otro AI, la respuesta no ha sido enviada al usuario, tu labor sería enviarle ese mensaje al usuario.\n\n\n\n\n## Tools\n\"send_telegram\" te permite enviar mensajes de telegram\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        112
+      ],
+      "id": "f49e87de-9d77-4e1f-ac3a-7649175faae9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        320
+      ],
+      "id": "d6aeb8a0-6287-4791-b684-f97c02535924",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "iW4BTRJXSCIlQ0o0",
+          "name": "jk-google"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        320
+      ],
+      "id": "8fb5af02-bdd5-4f23-a8d8-93930d8b5ac9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nreturn {\n  text: $input.first().json.text,\n  type: $input.first().json.type,\n  ai: $input.first().json.ai\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        16
+      ],
+      "id": "2a5c9a31-6310-4918-b151-a06004c643bd",
+      "name": "unir caminos"
+    },
+    {
+      "parameters": {
+        "content": "## Ai agent",
+        "height": 544,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "72f847b7-48c9-462c-ac9c-4219e071d633",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        304
+      ],
+      "id": "2060c28f-4b93-4a1d-b371-8fbf579cedfa",
+      "name": "send_telegram",
+      "webhookId": "79293902-d159-4a14-b4ad-e9a098371f47",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        112
+      ],
+      "id": "c21d251c-dfb6-48c4-866c-c37f27cf3690",
+      "name": "enviar mensaje de texto",
+      "webhookId": "58513653-1190-4afc-ae88-9587d5e7bd5d",
+      "credentials": {
+        "telegramApi": {
+          "id": "wMsHh5GcDujst8dx",
+          "name": "Telegram token jaki_500_bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Que tipo de mensaje es?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener el sticker": {
+      "main": [
+        [
+          {
+            "node": "descargar sticker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "descargar sticker": {
+      "main": [
+        [
+          {
+            "node": "Enviar sticker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Que tipo de mensaje es?": {
+      "main": [
+        [
+          {
+            "node": "obtener el sticker",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escribiendo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escribiendo": {
+      "main": [
+        [
+          {
+            "node": "datos del mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "datos del mensaje": {
+      "main": [
+        [
+          {
+            "node": "unir caminos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "unir caminos": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_telegram": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "enviar mensaje de texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "57f99e15-8694-4a82-aa4c-1098e24d36bb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ec2b8a199385d037a67e67f5938502131f5c97e4a5ec252270ea3ef568a1d059"
+  },
+  "id": "jTSakmfnKtx8NjzI",
+  "tags": []
+}
